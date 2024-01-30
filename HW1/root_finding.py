@@ -1,7 +1,7 @@
 
 
 
-def bisect(func, x0, x1, iternum=100):
+def bisect(func, x0, x1, iternum=100, tol=10**(-10)):
     # check for different signs
     f0 = func(x0)
     f1 = func(x1)
@@ -17,7 +17,7 @@ def bisect(func, x0, x1, iternum=100):
     m = (x0 + x1)/2
     fm = func(m)
 
-    if iternum == 0:
+    if iternum == 0 or abs(fm)<tol:
         return m
     
     if fm*f0 < 0:
@@ -29,7 +29,7 @@ def bisect(func, x0, x1, iternum=100):
 
 
 
-def newton(func, dfunc, x, iternum = 100):
+def newton(func, dfunc, x, iternum = 100, tol=10**(-10)):
     fx = func(x)
     dfx = dfunc(x)
     if dfx == 0:
@@ -37,19 +37,21 @@ def newton(func, dfunc, x, iternum = 100):
         return None
     
     print(x)
+    #print("fx:", fx)
+    #print("dfx:", dfx)
     
     x1 = x - (fx/dfx)
 
 
     # base case
-    if iternum==0 or x1==x:
+    if iternum==0 or x1==x or abs(func(x1))<tol:
         return x1
 
     # recursive
     return newton(func, dfunc, x1, iternum-1)
 
 
-def secant(func, x0, x1, iternum=100):
+def secant(func, x0, x1, iternum=100, tol=10**(-10)):
     f0 = func(x0)
     f1 = func(x1)
 
@@ -69,7 +71,7 @@ def secant(func, x0, x1, iternum=100):
             return None
     x2 = x1 - f1*(x1-x0)/(diff)
 
-    if iternum==0:
+    if iternum==0 or abs(func(x2))<tol:
         return x2
 
     return secant(func, x1, x2, iternum-1)
