@@ -76,7 +76,8 @@ if __name__ == "__main__":
         return math.exp(x)/((1 + math.exp(x))**2)
 
     #starting from -3
-    print(newton(func6, dfunc6, -3))
+    # This lind is commented out because it causes overflow due to divergence
+    # print(newton(func6, dfunc6, -3))
     
     #starting from -2
     print(newton(func6, dfunc6, -2))
