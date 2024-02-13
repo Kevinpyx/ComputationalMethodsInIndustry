@@ -1,6 +1,3 @@
-
-
-
 def bisect(func, x0, x1, iternum=100, tol=10**(-10)):
     # check for different signs
     f0 = func(x0)
@@ -26,7 +23,6 @@ def bisect(func, x0, x1, iternum=100, tol=10**(-10)):
         return bisect(func, m, x1, iternum-1)
     else:
         return m
-
 
 
 def newton(func, dfunc, x, iternum = 100, tol=10**(-10)):
@@ -75,6 +71,3 @@ def secant(func, x0, x1, iternum=100, tol=10**(-10)):
         return x2
 
     return secant(func, x1, x2, iternum-1)
-
-
-
