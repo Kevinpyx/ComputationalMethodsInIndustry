@@ -1,3 +1,5 @@
+# We worked together for this assignment --Seiju Hirose and Kevin Peng
+
 # sir.py
 # Eric A. Autry
 # CSC 395 Spring 2024
