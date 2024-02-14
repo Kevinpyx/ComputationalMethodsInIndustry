@@ -1,3 +1,5 @@
+# We worked together for this assignment --Seiju Hirose and Kevin Peng
+
 import math
 
 """
