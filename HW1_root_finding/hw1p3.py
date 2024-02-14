@@ -69,7 +69,7 @@ def sir(initVec, T, R0):
 
 
 """
-newton_sir: 
+newton_sir: uses Newton's method to find the t where I peaks
 
 t0: initial guess of the time where peak appears
 initVec: the initial values of S,I,R at time t=0
@@ -99,6 +99,50 @@ def newton_sir(t0, initVec, R0, iternum=100, tol=10**(-10)):
 	# recursive
 	return newton_sir(t1, initVec, R0, iternum-1)
 
+"""
+newton_sir_list: same method from above, but returns a list of guesses of t
+
+t0: initial guess of the time where peak appears
+initVec: the initial values of S,I,R at time t=0
+R0: the basic reproductive number, from the model
+
+Returns the list of guesses of time where I peaks
+"""
+def newton_sir_list(t0, initVec, R0, iternum=1000, tol=10**(-14)):
+	fx = 1 # so that the while loop runs at least once
+	lst = [t0]
+
+	while iternum > 0 and abs(fx) > tol:
+		iternum -= 1
+		y = sir(initVec, t0, R0) # current solution
+		fx = dIdt(y, t0, R0) # first derivative of I
+		dfx = dIdt2(y, t0, R0) # second derivatice of I
+
+		# check denominator for 0
+		if dfx == 0:
+			print("Division by zero")
+			return None
+	
+		# next guess
+		t1 = t0 - fx/dfx
+		lst.append(t1)
+
+		# update value
+		t0 = t1
+
+	return lst
+
+"""
+lst2err: takes in a list of values and compute the errors of the values with the last value in the list
+
+lst: a list of values that converge to the solution
+
+Returns a list of same size of errors
+"""
+
+def lst2err(lst):
+    sol = lst[-1]
+    return [abs(x - sol) for x in lst]
 
 
 """
@@ -163,9 +207,20 @@ if __name__ == "__main__":
 	print(sFin, iFin, rFin)
 
 	# finding peak of I
-	t = newton_sir(1.5, init, R0)
-	print("peak of I appears at t =", t)
-	print("peak value of I is", sir(init, t, R0)[1])
+	
+	'''This is our inital hw1p3'''
+	# t = newton_sir(1.5, init, R0)
+	# print("peak of I appears at t =", t)
+	# print("peak value of I is", sir(init, t, R0)[1])
+
+
+	'''This is the convergence error analysis'''
+	lst = newton_sir_list(1.2, init, R0)
+	error = lst2err(lst)
+
+	plt.loglog(error[:-1], error[1:])
+	plt.grid()
+	plt.show()
 	
 
 	# Plot the solution through time T=4.
