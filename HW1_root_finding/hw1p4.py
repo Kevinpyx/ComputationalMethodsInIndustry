@@ -181,7 +181,6 @@ if __name__ == "__main__":
     plt.legend(loc="best")
     plt.grid()
 
-    plt.tight_layout(4)
     plt.show()
 
 """
