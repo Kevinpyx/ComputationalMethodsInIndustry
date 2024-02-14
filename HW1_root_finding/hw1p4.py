@@ -1,3 +1,5 @@
+# We worked together for this assignment --Seiju Hirose and Kevin Peng
+
 # Function definitions
 
 def bisect(func, x0, x1, iternum=1000, tol=10**(-14)):
