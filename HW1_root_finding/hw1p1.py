@@ -1,5 +1,6 @@
-# Function definitions
+# We worked together for this assignment --Seiju Hirose and Kevin Peng
 
+# Function definitions
 def bisect(func, x0, x1, iternum=100, tol=10**(-10)):
     # function evaluation
     f0 = func(x0)
