@@ -1,16 +1,30 @@
+# We worked together for this assignment --Seiju Hirose and Kevin Peng
+
 import numpy as np
 
-def func(x): # takes in a 2D numpy array
+def func1(x): # takes in a 2D numpy array
     return x[0]**2 + x[1]**2
 
-def dfunc(x): # takes in a 2D numpy array
+def dfunc1(x): # takes in a 2D numpy array
     return np.array([2*x[0], 2*x[1]])
 
+def func2(x): # takes in a 2D numpy array
+    return (10**6)*(x[0]**2) + x[1]**2
 
-def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-6)):
+def dfunc2(x): # takes in a 2D numpy array
+    return np.array([2*(10**6)*x[0], 2*x[1]])
+
+def func3(x): # takes in a 5D numpy array
+    return x[0]**2 + x[1]**2 + x[2]**2 + x[3]**2 + x[4]**2
+
+def dfunc3(x): # takes in a 5D numpy array
+    return np.array([2*x[0], 2*x[1], 2*x[2], 2*x[3], 2*x[4]])
+
+
+def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-10)):
     # fx = func(x0)
     gradf = dfunc(x0)
-    norm = np.linalg.norm(gradf)
+    norm = tol * 1.1 # so we always enter the while loop (norm > tol assuming tol is positive)
     lst = [x0]
 
     while iternum>0 and norm>tol:
@@ -18,10 +32,10 @@ def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-6)):
         x1 = x0 - alpha*gradf 
         lst.append(x1)
 
-        # update x and calculate new grad
+        # calculate new grad and update x
+        gradf = dfunc(x1)
+        norm = np.linalg.norm(x1-x0)
         x0 = x1
-        gradf = dfunc(x0)
-        norm = np.linalg.norm(gradf)
 
         # update iternum
         iternum -= 1 
@@ -30,10 +44,10 @@ def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-6)):
 
 # unfinished
 # 
-def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-6)):
+def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-10)):
     fx = func(x0)
     gradf = dfunc(x0)
-    norm = np.linalg.norm(gradf)
+    norm = tol * 1.1  # so we always enter the while loop (norm > tol assuming tol is positive)
 
     while iternum>0 and norm>tol:
         # contracting alpha
@@ -44,10 +58,10 @@ def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-
         # calculate new x and append to the list 
         x1 = x0 - alpha*gradf 
 
-        # update x and calculate new grad
+        # calculate new grad and update x
+        gradf = dfunc(x1)
+        norm = np.linalg.norm(x1-x0)
         x0 = x1
-        gradf = dfunc(x0)
-        norm = np.linalg.norm(gradf)
 
         # update iternum
         iternum -= 1 
