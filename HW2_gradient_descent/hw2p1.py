@@ -104,10 +104,10 @@ if __name__ == "__main__":
     guesses = gradientDescent(func2, dfunc2, np.array([1, 1]), 0.1)
     print("Number of iterations performed:", len(guesses)-1)
     print("Best guess:", guesses[-1])
-    # print()
-    # print("Every ten guesses:")
-    # for n in range(0, len(guesses), 10):
-    #     print(guesses[n])
+    print()
+    print("Every ten guesses:")
+    for n in range(0, len(guesses), 10):
+        print(guesses[n])
     print()
 
     print("f2 with small step size")
@@ -121,8 +121,8 @@ if __name__ == "__main__":
     print()
  
     # Observation:
-    # Due to the large coefficient on x1, when the step size is about right for x2, x1 diverges. However, when the step size is good
-    # for x1, it is too small for x2. 
+    # Due to the large coefficient on x1, when the step size is about right for x2, x1 diverges (oversteps by a huge amount). However, when 
+    # the step size is good for x1, it is too small for x2, so x2 converges very slowly. 
 
 
     ### Question 3 ###
