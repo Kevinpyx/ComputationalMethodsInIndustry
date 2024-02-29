@@ -21,7 +21,8 @@ def dfunc3(x): # takes in a 5D numpy array
     return np.array([2*x[0], 2*x[1], 2*x[2], 2*x[3], 2*x[4]])
 
 
-def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-10)):
+# simple gradient descent function
+def gradientDescent (func, dfunc, x0, alpha, iternum=200, tol=10**(-10)):
     # fx = func(x0)
     gradf = dfunc(x0)
     norm = tol * 1.1 # so we always enter the while loop (norm > tol assuming tol is positive)
@@ -43,7 +44,6 @@ def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-10)):
     return lst
 
 # unfinished
-# 
 def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-10)):
     fx = func(x0)
     gradf = dfunc(x0)
@@ -73,14 +73,40 @@ def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-
 Main
 """
 if __name__ == "__main__":
-    answer = gradientDescent(func, dfunc, np.array([5, 5]), 0.2)
-    print("Number of iterations performed:", len(answer))
-    print(answer[-1])
+    print()
+
+    ### Question 1 ###
+    print("f1 with big step size")
+    guesses = gradientDescent(func1, dfunc1, np.array([5, 5]), 2)
+    print("Number of iterations performed:", len(guesses)-1)
+    print("Best guess:", guesses[-1])
+    # print()
+    # print("Every ten guesses:")
+    # for n in range(0, len(guesses), 10):
+    #     print(guesses[n])
+    print()
+    # Observation:
+    # When the step size is too large, the function oversteps and diverges. 
+
+    print("f1 with small step size")
+    guesses = gradientDescent(func1, dfunc1, np.array([5, 5]), 10**(-4))
+    print("Number of iterations performed:", len(guesses)-1)
+    print("Best guess:", guesses[-1])
+    # print()
+    # print("Every ten guesses:")
+    # for n in range(0, len(guesses), 10):
+    #     print(guesses[n])
+    print()
+    # Observation: 
+    # When teh step size is too small, the convergence happens very slowly. 
+
+
+
     #print("Function values: ")
     # for x in answer:
     #     print(func(x))
 
-    answer = gradientDescent_BT(func, dfunc, np.array([5, 5]), 1, 0.5, 0.99)
-    print(answer)
+    # answer = gradientDescent_BT(func, dfunc, np.array([5, 5]), 1, 0.5, 0.99)
+    # print(answer)
 
     
