@@ -2,6 +2,8 @@
 
 import numpy as np
 
+##### Test Functions #####
+
 def func1(x): # takes in a 2D numpy array
     return x[0]**2 + x[1]**2
 
@@ -20,6 +22,7 @@ def func3(x): # takes in a 5D numpy array
 def dfunc3(x): # takes in a 5D numpy array
     return np.array([2*x[0], 2*x[1], 2*x[2], 2*x[3], 2*x[4]])
 
+# problem 2
 A = np.array([[2,-1,0],[-1,2,-1],[0,-1,2]] )
 b = np.array([2,0,2])
 def funcProb1p2(x): # takes in a numpy array
@@ -27,6 +30,8 @@ def funcProb1p2(x): # takes in a numpy array
 
 def dfuncProb1p2(x): # takes in a numpy array
     return A@x - b
+
+##### Gradient Descent Functions #####
 
 # Problem 1: gradientDescent with fixed alpha
 def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-10)):
@@ -50,14 +55,14 @@ def gradientDescent (func, dfunc, x0, alpha, iternum=100, tol=10**(-10)):
 
     return lst
 
-# Problem 2
+# Problem 2: gradient descent with calculated optimal alpha
 def gradientDescent2 (func, dfunc, x0, iternum=100, tol=10**(-10)):
     # fx = func(x0)
     gradf = dfunc(x0)
     norm = tol * 1.1 # so we always enter the while loop (norm > tol assuming tol is positive)
     lst = [x0]
 
-    print(gradf)
+    # print(gradf)
 
     while iternum>0 and norm>tol:
         # calculate alpha from fixed A and b (Problem 2)
@@ -78,31 +83,33 @@ def gradientDescent2 (func, dfunc, x0, iternum=100, tol=10**(-10)):
 
     return lst
 
-# unfinished
-# 
+# gradient descent with backtracking
 def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-10)):
     fx = func(x0)
     gradf = dfunc(x0)
+    pk = -gradf
     norm = tol * 1.1  # so we always enter the while loop (norm > tol assuming tol is positive)
+    
 
     while iternum>0 and norm>tol:
         # contracting alpha
-        while func(x0-alpha*gradf) > fx - c1*alpha*(gradf@gradf):
+        while func(x0 + alpha*pk) > fx + c1*alpha*(gradf.T@pk):
             alpha = rho*alpha
-        print("new alpha:", alpha)    
+        #print("new alpha:", alpha)    
 
         # calculate new x and append to the list 
         x1 = x0 - alpha*gradf 
 
         # calculate new grad and update x0
         gradf = dfunc(x1)
+        pk = -gradf
         norm = np.linalg.norm(x1-x0)
         x0 = x1
 
         # update iternum
         iternum -= 1 
 
-    return x1
+    return x1, 100-iternum
 
 
 """
@@ -113,8 +120,8 @@ if __name__ == "__main__":
 
     ### Question 1 ###
     print("f1 with big step size")
-    guesses = gradientDescent(func11, dfunc11, np.array([5, 5]), 2)
-    # print("Number of iterations performed:", len(guesses)-1)
+    guesses = gradientDescent(func1, dfunc1, np.array([5, 5]), 2)
+    print("Number of iterations performed:", len(guesses)-1)
     print("Best guess:", guesses[-1])
     # print()
     # print("Every ten guesses:")
@@ -126,7 +133,7 @@ if __name__ == "__main__":
 
     print("f1 with small step size")
     guesses = gradientDescent(func1, dfunc1, np.array([5, 5]), 10**(-4))
-    # print("Number of iterations performed:", len(guesses)-1)
+    print("Number of iterations performed:", len(guesses)-1)
     print("Best guess:", guesses[-1])
     # print()
     # print("Every ten guesses:")
@@ -161,13 +168,34 @@ if __name__ == "__main__":
     # the step size is good for x1, it is too small for x2, so x2 converges very slowly. 
 
 
-    ### Question 3 ###
+    ### Question 2 ###
 
     answer = gradientDescent2(funcProb1p2, dfuncProb1p2, np.array([5,5,5]))
-    print("Number of iterations performed:", len(answer))
+    print("Number of iterations performed:", len(answer)-1)
+    print(answer[-1])
+    # the answer x is correct
+    print()
+
+    ### Question 3 ###
+    print("f1 with backtracking:")
+    answer, iternum = gradientDescent_BT(func1, dfunc1, np.array([5, 5]), alpha=1, c1=0.1, rho=0.9)
+    print("Number of iterations performed:", iternum)
+    print(answer)
+    # Observation: 
+    # We get an alpha value of 0.81. Gradient descent with alpha smaller than 0.81 (but not too small) performs better than this. For
+    # example, the gradient descent without backtracking below with alpha=0.6 converges within less iterations. 
+
+    print("f1 without backtracking:")
+    answer = gradientDescent(func1, dfunc1, np.array([5, 5]), alpha=0.6)
+    print("Number of iterations performed:", len(answer)-1)
     print(answer[-1])
 
-    # answer = gradientDescent_BT(func1, dfunc1, np.array([5, 5, ]), alpha=1, c1=0.1, rho=0.9)
-    # # print(answer)
-
+    print("f2:")
+    answer, iternum = gradientDescent_BT(func2, dfunc2, np.array([1, 1]), alpha=1, c1=0.1, rho=0.9)
+    print("Number of iterations performed:", iternum)
+    print(answer)
     
+    print("f3:")
+    answer, iternum = gradientDescent_BT(func3, dfunc3, np.array([1, 1, 1, 1, 1]), alpha=1, c1=0.1, rho=0.9)
+    print("Number of iterations performed:", iternum)
+    print(answer)
