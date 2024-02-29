@@ -33,7 +33,7 @@ def gradientDescent (func, dfunc, x0, alpha, iternum=200, tol=10**(-10)):
         x1 = x0 - alpha*gradf 
         lst.append(x1)
 
-        # calculate new grad and update x
+        # calculate new grad and update x0
         gradf = dfunc(x1)
         norm = np.linalg.norm(x1-x0)
         x0 = x1
@@ -43,7 +43,7 @@ def gradientDescent (func, dfunc, x0, alpha, iternum=200, tol=10**(-10)):
 
     return lst
 
-# unfinished
+# gradient descent with backtracking
 def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-10)):
     fx = func(x0)
     gradf = dfunc(x0)
@@ -53,12 +53,12 @@ def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-
         # contracting alpha
         while func(x0-alpha*gradf) > fx - c1*alpha*(gradf@gradf):
             alpha = rho*alpha
-            print("alpha:", alpha)
+        print("new alpha:", alpha)    
 
         # calculate new x and append to the list 
         x1 = x0 - alpha*gradf 
 
-        # calculate new grad and update x
+        # calculate new grad and update x0
         gradf = dfunc(x1)
         norm = np.linalg.norm(x1-x0)
         x0 = x1
@@ -100,13 +100,34 @@ if __name__ == "__main__":
     # Observation: 
     # When teh step size is too small, the convergence happens very slowly. 
 
+    print("f2 with big step size")
+    guesses = gradientDescent(func2, dfunc2, np.array([1, 1]), 0.1)
+    print("Number of iterations performed:", len(guesses)-1)
+    print("Best guess:", guesses[-1])
+    # print()
+    # print("Every ten guesses:")
+    # for n in range(0, len(guesses), 10):
+    #     print(guesses[n])
+    print()
+
+    print("f2 with small step size")
+    guesses = gradientDescent(func2, dfunc2, np.array([1, 1]), 10**(-7))
+    print("Number of iterations performed:", len(guesses)-1)
+    print("Best guess:", guesses[-1])
+    # print()
+    # print("Every ten guesses:")
+    # for n in range(0, len(guesses), 10):
+    #     print(guesses[n])
+    print()
+ 
+    # Observation:
+    # Due to the large coefficient on x1, when the step size is about right for x2, x1 diverges. However, when the step size is good
+    # for x1, it is too small for x2. 
 
 
-    #print("Function values: ")
-    # for x in answer:
-    #     print(func(x))
+    ### Question 3 ###
 
-    # answer = gradientDescent_BT(func, dfunc, np.array([5, 5]), 1, 0.5, 0.99)
+    # answer = gradientDescent_BT(func1, dfunc1, np.array([5, 5]), alpha=1, c1=0.1, rho=0.9)
     # print(answer)
 
     
