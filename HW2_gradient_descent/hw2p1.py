@@ -95,7 +95,7 @@ def gradientDescent_BT (func, dfunc, x0, alpha, c1, rho, iternum=100, tol=10**(-
         # contracting alpha
         while func(x0 + alpha*pk) > fx + c1*alpha*(gradf.T@pk):
             alpha = rho*alpha
-        #print("new alpha:", alpha)    
+        print("new alpha:", alpha)    
 
         # calculate new x and append to the list 
         x1 = x0 - alpha*gradf 
@@ -194,8 +194,15 @@ if __name__ == "__main__":
     answer, iternum = gradientDescent_BT(func2, dfunc2, np.array([1, 1]), alpha=1, c1=0.1, rho=0.9)
     print("Number of iterations performed:", iternum)
     print(answer)
+    # Observation:
+    # For this function, with the wolfe conditions, we can avoid situations like picking an alpha that causes the guess to diverge. 
     
-    print("f3:")
+    print("f3 with backtracking:")
     answer, iternum = gradientDescent_BT(func3, dfunc3, np.array([1, 1, 1, 1, 1]), alpha=1, c1=0.1, rho=0.9)
     print("Number of iterations performed:", iternum)
     print(answer)
+
+    print("f3 without backtracking:")
+    answer = gradientDescent(func3, dfunc3, np.array([1, 1, 1, 1, 1]), alpha=0.6)
+    print("Number of iterations performed:", len(answer)-1)
+    print(answer[-1])
