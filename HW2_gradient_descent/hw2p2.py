@@ -66,6 +66,7 @@ def newton(jacobian, hessian, x, iternum = 100, tol=10**(-14)):
 
     return lst
 
+# lst2err: get the absolute values of a list of guesses subtracted by the correct solution
 def lst2err(lst, solution):
     return [abs(x - solution) for x in lst]
 
@@ -100,25 +101,14 @@ if __name__ == "__main__":
     print(answer)
 
     # calculating errors of norms
-    norms = [np.linalg.norm(x) for x in answer]
-    errors = lst2err(norms, np.linalg.norm(np.array([math.pi, math.pi*3/2])))
+    errors = lst2err(answer, np.array([math.pi, math.pi*3/2]))
+    norm_errs = [np.linalg.norm(x) for x in errors]
 
-    plt.subplot(1, 2, 1)
+    
     plt.title('f4: norm convergence analysis')
-    plt.loglog(errors[:-1], errors[1:])
+    plt.loglog(norm_errs[:-1], norm_errs[1:])
     plt.grid()
-
-    # calculating errors of x1 and x2 values
-    x1_lst = [v[0] for v in answer]
-    x2_lst = [v[1] for v in answer]
-    x1_err = lst2err(x1_lst, math.pi)
-    x2_err = lst2err(x2_lst, math.pi*3/2)
-
-    plt.subplot(1, 2, 2)
-    plt.title('f4: x1 and x2 convergence analysis')
-    plt.loglog(x1_err[:-1], x1_err[1:], 'b', label="x1")
-    plt.loglog(x2_err[:-1], x2_err[1:], 'g', label="x2")
-    plt.legend(loc="best")
-    plt.grid()
-
     plt.show()
+
+    # Observation:
+    # We can see the slope of this line is 2. 
