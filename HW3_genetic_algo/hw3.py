@@ -5,7 +5,7 @@ Date:
 """
 
 import math
-import random
+import random as rdm
 import Organism as Org
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,18 +15,18 @@ crossover operation for genetic algorithm
 """
 def crossover(parent1, parent2):
     numCoeffs = parent1.numCoeffs
-    k = randint(0, numCoeffs)
+    k = rdm.randint(0, numCoeffs)
     child1 = Org.Organism(numCoeffs, np.concatenate(parent1.bits[0:64*k], parent2.bits[64*k:]))
     child2 = Org.Organism(numCoeffs, np.concatenate(parent2.bits[0:64*k], parent1.bits[64*k:]))
 
-    return (child1, child2)
+    return child1, child2
 
 """
 mutation operation for genetic algorithm
 """
 def mutation(genome, mutRate):
     for bit in genome:
-        r = random(0,1)
+        r = rdm.random(0,1)
         if r<mutRate:
             bit = 1-bit
     return genome
@@ -35,7 +35,7 @@ def mutation(genome, mutRate):
 selection operation for choosing a parent for mating from the population
 """
 def selection(pop):
-    threshold = random(0,1)
+    threshold = rdm.random(0,1)
     length = len(pop)
     i = 0
     while pop[i].accFit < threshold or i < length:
@@ -85,8 +85,26 @@ def calcFit(org, xVals, yVals):
 accPop will calculate the fitness and accFit of the population
 """
 def accPop(pop, xVals, yVals):
+
+    # calculate fitness for every org and the sum of fitness
+    fitnessSum = 0
     for org in pop:
-        #
+        org.fitness = calcFit(org, xVals, yVals)
+        fitnessSum += org.fitness
+
+    # sort the population by fitness in descending order (https://stackoverflow.com/questions/403421/how-do-i-sort-a-list-of-objects-based-on-an-attribute-of-the-objects)
+    pop.sort(key=lambda x: x.fitness, reverse=True)
+
+    # calculate normalized fitness
+    for org in pop:
+        org.normFit = org.fitness/fitnessSum
+
+    # calculate accFit
+    accFit = 0
+    for org in pop:
+        accFit += org.normFit
+        org.accFit = accFit
+    
     return pop
 
 """
@@ -121,7 +139,34 @@ def initPop(size, numCoeffs):
 nextGeneration will create the next generation
 """
 def nextGeneration(pop, numCoeffs, mutRate, eliteNum):
+    newPop = []
+
+    # mate
+    for i in range((len(pop)-eliteNum)//2):
+        # selection
+        parent1 = selection(pop)
+        parent2 = selection(pop)
+        # crossover
+        child1, child2 = crossover(parent1, parent2)
+        # mutation
+        child1.bits = mutation(child1.bits, mutRate)
+        child2.bits = mutation(child2.bits, mutRate)
+        # append
+        newPop.extend([child1, child2])
+
+    # append the elites
+    newPop.extend(pop[:eliteNum])
+
     return newPop
+
+"""
+containsClone: checks whether newOrg has a clone in lst.
+"""
+def containsClone(lst, newOrg):
+    for org in lst: 
+        if org.isClone(newOrg):
+            return True
+    return False
 
 """
 GA will perform the genetic algorithm for k+1 generations (counting
@@ -142,6 +187,21 @@ best: the bestN number of best organisms seen over the course of the GA
 fit:  the highest observed fitness value for each iteration
 """
 def GA(k, size, numCoeffs, mutRate, xVals, yVals, eliteNum, bestN):
+    # initilization
+    pop = initPop(size, numCoeffs)
+    # get values from the first generation
+    pop = accPop(pop, xVals, yVals)
+    best = pop[:bestN]
+    fit = [pop[0].fitness]
+
+    for i in range(k):
+        newPop = nextGeneration(pop, numCoeffs, mutRate, eliteNum)
+        pop = accPop(newPop, xVals, yVals)
+
+        fit.append(pop[0].fitness)
+        # the next is to add things into best list while checking for clones with containsClone()
+        
+
     return (best,fit)
 
 """
