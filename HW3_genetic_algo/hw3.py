@@ -7,25 +7,40 @@ Date:
 import math
 import random
 import Organism as Org
+import numpy as np
 import matplotlib.pyplot as plt
 
 """
 crossover operation for genetic algorithm
 """
 def crossover(parent1, parent2):
+    numCoeffs = parent1.numCoeffs
+    k = randint(0, numCoeffs)
+    child1 = Org.Organism(numCoeffs, np.concatenate(parent1.bits[0:64*k], parent2.bits[64*k:]))
+    child2 = Org.Organism(numCoeffs, np.concatenate(parent2.bits[0:64*k], parent1.bits[64*k:]))
+
     return (child1, child2)
 
 """
 mutation operation for genetic algorithm
 """
 def mutation(genome, mutRate):
+    for bit in genome:
+        r = random(0,1)
+        if r<mutRate:
+            bit = 1-bit
     return genome
 
 """
 selection operation for choosing a parent for mating from the population
 """
 def selection(pop):
-    return org
+    threshold = random(0,1)
+    length = len(pop)
+    i = 0
+    while pop[i].accFit < threshold or i < length:
+        i += 1
+    return pop[i] if i < length else pop[-1]
 
 """
 calcFit will calculate the fitness of an organism
@@ -70,6 +85,8 @@ def calcFit(org, xVals, yVals):
 accPop will calculate the fitness and accFit of the population
 """
 def accPop(pop, xVals, yVals):
+    for org in pop:
+        #
     return pop
 
 """
