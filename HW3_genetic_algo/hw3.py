@@ -14,10 +14,16 @@ import matplotlib.pyplot as plt
 crossover operation for genetic algorithm
 """
 def crossover(parent1, parent2):
-    numCoeffs = parent1.numCoeffs
-    k = rdm.randint(0, numCoeffs)
-    child1 = Org.Organism(numCoeffs, np.concatenate(parent1.bits[0:64*k], parent2.bits[64*k:]))
-    child2 = Org.Organism(numCoeffs, np.concatenate(parent2.bits[0:64*k], parent1.bits[64*k:]))
+    # numCoeffs = len(parent1.bits)//64
+    # k = rdm.randint(0, numCoeffs)
+    # child1 = Org.Organism(numCoeffs, np.concatenate((parent1.bits[0:64*k], parent2.bits[64*k:])))
+    # child2 = Org.Organism(numCoeffs, np.concatenate((parent2.bits[0:64*k], parent1.bits[64*k:])))
+
+    lenBits = len(parent1.bits)
+    numCoeffs = lenBits//64
+    k = rdm.randint(0, lenBits)
+    child1 = Org.Organism(numCoeffs, np.concatenate((parent1.bits[0:k], parent2.bits[k:])))
+    child2 = Org.Organism(numCoeffs, np.concatenate((parent2.bits[:k], parent1.bits[k:])))
 
     return child1, child2
 
@@ -26,7 +32,7 @@ mutation operation for genetic algorithm
 """
 def mutation(genome, mutRate):
     for bit in genome:
-        r = rdm.random(0,1)
+        r = rdm.random()
         if r<mutRate:
             bit = 1-bit
     return genome
@@ -35,10 +41,10 @@ def mutation(genome, mutRate):
 selection operation for choosing a parent for mating from the population
 """
 def selection(pop):
-    threshold = rdm.random(0,1)
+    threshold = rdm.random()
     length = len(pop)
     i = 0
-    while pop[i].accFit < threshold or i < length:
+    while pop[i].accFit < threshold and i < length:
         i += 1
     return pop[i] if i < length else pop[-1]
 
@@ -169,6 +175,25 @@ def containsClone(lst, newOrg):
     return False
 
 """
+updateBestN: takes in the list of bestN number of best organisms and newPop to get the new Best organisms
+"""
+def updateBest(best, newPop):
+    tail = best[-1]
+    i = 0
+    while(i < len(newPop) and newPop[i].fitness > tail.fitness):
+        if containsClone(best, newPop[i]):
+            pass # do nothing
+        else: 
+            best[-1] = newPop[i] # replace the tail
+            best.sort(key=lambda x: x.fitness, reverse=True) # sort best
+
+        # update indices
+        i += 1
+        tail = best[-1]
+
+    return best
+
+"""
 GA will perform the genetic algorithm for k+1 generations (counting
 the initial generation).
 
@@ -195,13 +220,13 @@ def GA(k, size, numCoeffs, mutRate, xVals, yVals, eliteNum, bestN):
     fit = [pop[0].fitness]
 
     for i in range(k):
-        newPop = nextGeneration(pop, numCoeffs, mutRate, eliteNum)
-        pop = accPop(newPop, xVals, yVals)
+        pop = nextGeneration(pop, numCoeffs, mutRate, eliteNum)
+        pop = accPop(pop, xVals, yVals)
 
+        # save the values
         fit.append(pop[0].fitness)
-        # the next is to add things into best list while checking for clones with containsClone()
+        best = updateBest(best, pop)
         
-
     return (best,fit)
 
 """
@@ -246,7 +271,7 @@ if __name__ == '__main__':
     scenA = False
     scenB = False
     scenC = False
-    scenD = False
+    scenD = True
 
     if not (scenA or scenB or scenC or scenD):
         print("All scenarios disabled. Set a flag to True to run a scenario.")
@@ -281,6 +306,9 @@ if __name__ == '__main__':
         for org in best:
             print(org)
             print()
+
+    # Observation: 
+    # We tried numCoeffs = 1 because we know the answer. However, the final fitness is usually worse than numCoeffs = 4. 
 
 ################################################################################
     ### Scenario B: Fitting to a constant function, y = 5. ###
@@ -374,3 +402,8 @@ if __name__ == '__main__':
         for org in best:
             print(org)
             print()
+
+# Observations: 
+# We noticed that our algorithm works worse and worse when we get to scenario B, C, and D. It might
+# be because there are more coefficients farther away from our starting population (which contains
+# four specially created organisms). 
