@@ -1,7 +1,7 @@
 """
 hw3.py
-Name(s):
-Date:
+Name(s): Seiju Hirose and Kevin Peng
+Date: March 9, 2024
 """
 
 import math
