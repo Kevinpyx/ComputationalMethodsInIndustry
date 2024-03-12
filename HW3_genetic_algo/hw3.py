@@ -157,6 +157,11 @@ def nextGeneration(pop, numCoeffs, mutRate, eliteNum):
         # mutation
         child1.bits = mutation(child1.bits, mutRate)
         child2.bits = mutation(child2.bits, mutRate)
+
+        # re-calculate floats
+        child1.floats = Org.getFloats(child1.bits)
+        child2.floats = Org.getFloats(child2.bits)
+
         # append
         newPop.extend([child1, child2])
 
@@ -268,9 +273,9 @@ if __name__ == '__main__':
 
     # Flags to suppress any given scenario. Simply set to False and that
     # scenario will be skipped. Set to True to enable a scenario.
-    scenA = False
-    scenB = False
-    scenC = False
+    scenA = True
+    scenB = True
+    scenC = True
     scenD = True
 
     if not (scenA or scenB or scenC or scenD):
@@ -407,3 +412,4 @@ if __name__ == '__main__':
 # We noticed that our algorithm works worse and worse when we get to scenario B, C, and D. It might
 # be because there are more coefficients farther away from our starting population (which contains
 # four specially created organisms). 
+# After running the algorithm a few more times we realized how big the variance of the results could be. 
