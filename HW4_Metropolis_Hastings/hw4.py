@@ -103,17 +103,17 @@ def mu(message):
 
 if __name__ == "__main__":
 
-    message = "As a final note, remember that this method is random, so it might fail to decipher the text even if implemented correctly. If it fails, try again several times. You should be able to decipher the message most of the time, so a few attempts should be sufficient."
+    message = "As a final note about this exercise, there are no correct or incorrect answers here. Off the top of my head, I can think of over a dozen different approaches to confuse the Metropolis attacker, and I can think of some pros and cons of each. I am not looking for you to find the best method, and it is fine if your method is not able to trick your Metropolis attacker. I am mainly interested in how you think about Metropolis Hastings and how your knowledge of the algorithm has helped shape your ideas here. And remember, this part is supposed to be fun. So have some fun with it."
     cipher = randCipherGen()
     scrambled = encipher(message, cipher)
 
-    print(transitionMatrix.shape)
+    #print(transitionMatrix.shape)
 
     # load transition matrix:
     with open('transMat.pkl', 'rb') as f:  # Python 3: open(..., 'rb')
         transitionMatrix = np.array(pickle.load(f))
 
-    print(transitionMatrix.shape)
+    #print(transitionMatrix.shape)
 
     x = randCipherGen()
     bestSol = (x, mu(encipher(scrambled, x)))
@@ -121,11 +121,17 @@ if __name__ == "__main__":
     for i in range(10000):
         # print('Round ' + str(i))
         y = nextSol(scrambled, x)
+        # print(y)
         prob_y = mu(encipher(scrambled, y))
         if prob_y > bestSol[1]:
             bestSol = (y, prob_y)
         
         x = y
 
+    print(cipher)
     print(x)
     print(encipher(scrambled, x))
+
+    # we are not sure about how we can determine how good a solution is. 
+    # It seems the last cipher is not bad (the deciphered message looks like English text a lot),
+    # but what's produced from the cipher in bestSol is far worse. 
