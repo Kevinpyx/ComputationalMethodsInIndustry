@@ -412,4 +412,5 @@ if __name__ == '__main__':
 # We noticed that our algorithm works worse and worse when we get to scenario B, C, and D. It might
 # be because there are more coefficients farther away from our starting population (which contains
 # four specially created organisms). 
-# After running the algorithm a few more times we realized how big the variance of the results could be. 
+# After running the algorithm a few more times we realized how big the variance of the results could be, 
+# so the conclusion above might just be coincidents. 
