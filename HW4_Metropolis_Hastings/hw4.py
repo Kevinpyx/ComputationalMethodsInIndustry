@@ -120,7 +120,7 @@ if __name__ == "__main__":
         transitionMatrix = np.array(pickle.load(f))
 
     #print(transitionMatrix.shape)
-'''
+
     x = randCipherGen()
     bestSol = (x, logMu(encipher(scrambled, x)))
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     print(bestSol[0])
     print(encipher(scrambled, bestSol[0]))
     print('bestSol logProb: ' + str(logMu(encipher(scrambled, bestSol[0]))))
-'''
+
     
 
 '''
