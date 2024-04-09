@@ -17,7 +17,7 @@ def c2iHelper(char):
     if char.islower():
         return ord(char) - 97
     elif char.isupper(): 
-        return ord(char) - 65
+        return ord(char) - 65 + 26
     elif char == ' ':
         return 52
     elif char == ',':
@@ -79,16 +79,21 @@ def nextSol(encrypted, x):
         i += 1
     
     # compute the acceptance probability
-    accProb = math.e**(logSumY - logSumX)
-    
-    accProb = min(accProb, 1)
+    if (logSumY - logSumX) > 10: #so that there won't be an overflown error due to the index being too big
+        accProb = 1
+    else: 
+        accProb = math.e**(logSumY - logSumX)
+        accProb = min(accProb, 1)
+
 
     # determine to accept or not
     if rand.random() <= accProb:
         return y
     return x
 
-def mu(message):
+# This function computes the log of mu(x) of a message so that we can compare how good a solution is
+# We tried exponentiate the log but then all the probability are too small to compare
+def logMu(message):
     i = 0
     logSum = 0
     while (i < len(message)-1):
@@ -98,7 +103,8 @@ def mu(message):
         logSum += math.log(prob)
         i += 1
 
-    return math.e**(logSum)
+    # print(logSum)
+    return logSum # was originally math.e**(logSum), but we found this works better
 
 
 if __name__ == "__main__":
@@ -110,27 +116,28 @@ if __name__ == "__main__":
     #print(transitionMatrix.shape)
 
     # load transition matrix:
-    with open('transMat.pkl', 'rb') as f:  # Python 3: open(..., 'rb')
+    with open('/Users/kevinpyx/Library/CloudStorage/OneDrive-GrinnellCollege/Grinnell_Documents/Courses/2024_Spring/CSC-395/HW4_Metropolis_Hastings/transMat.pkl', 'rb') as f:  # Python 3: open(..., 'rb')
         transitionMatrix = np.array(pickle.load(f))
 
     #print(transitionMatrix.shape)
 
     x = randCipherGen()
-    bestSol = (x, mu(encipher(scrambled, x)))
+    bestSol = (x, logMu(encipher(scrambled, x)))
 
-    for i in range(10000):
-        # print('Round ' + str(i))
+    for i in range(20000):
         y = nextSol(scrambled, x)
         # print(y)
-        prob_y = mu(encipher(scrambled, y))
+        prob_y = logMu(encipher(scrambled, y))
+        
         if prob_y > bestSol[1]:
             bestSol = (y, prob_y)
         
         x = y
 
-    print(cipher)
-    print(x)
-    print(encipher(scrambled, x))
+    # print(cipher)
+    print(bestSol[0])
+    print(encipher(scrambled, bestSol[0]))
+    print('bestSol logProb: ' + str(logMu(encipher(scrambled, bestSol[0]))))
 
     # we are not sure about how we can determine how good a solution is. 
     # It seems the last cipher is not bad (the deciphered message looks like English text a lot),
