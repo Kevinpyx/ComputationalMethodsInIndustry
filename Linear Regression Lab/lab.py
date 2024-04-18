@@ -21,5 +21,5 @@ cumulative = [1, 2, 3, 5, 6, 7, 8, 11, 12, 12, 14, 15, 15, 19, 24, 42, 57, 85,
 
 non_dim_t = np.array(days)*gamma
 # J = np.append(non_dim_t, np.ones()))
-print(J)
+# print(J)
 
