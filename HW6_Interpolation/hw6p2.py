@@ -41,8 +41,26 @@ def test_quad(x):
 TODO: your code goes below!
 """
 def poly_fit(x_vals, y_vals, n):
-    xi = np.zeros(n+1) #FIXME!
-    return xi
+    length = len(x_vals)
+    ones = np.ones(length).reshape(-1, 1)
+    x_col = np.array(x_vals).reshape(-1, 1)
+    y_col = np.array(y_vals).reshape(-1, 1)
+    # creating J
+    if n < 0:
+        raise(Exception)
+    elif n == 0: 
+        J = ones
+    elif n == 1:
+        J = np.hstack((ones, x_col))
+    else:
+        J = np.hstack((ones, x_col))
+        for i in range(2, n+1):
+            ith_col = np.power(x_col, i)
+            J = np.hstack((J, ith_col))
+
+    a = np.transpose(J)@J
+    b = np.transpose(J)@y_col
+    return np.linalg.solve(a, b)
 
 """
 Python's "main function" block.
@@ -76,4 +94,11 @@ if __name__ == "__main__":
     ff = [sum([xi[ii]*pow(x,ii) for ii in range(n+1)]) for x in x_lin]
     plt.plot(x_lin, ff)
     plt.show()
+
+'''
+Results:
+[[ 6.01270012]
+ [-4.83695516]
+ [ 0.94481248]]
+'''
     

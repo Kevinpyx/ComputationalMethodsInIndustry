@@ -17,8 +17,30 @@ def test_quad(x):
 TODO: your implementation goes below!
 """
 def lagrange(x, x_vals, y_vals):
-    ret = 0 #FIXME
-    return ret
+    length = len(x_vals)
+    Px = 0
+    for i in range(length):
+        yi = y_vals[i]
+        xi = x_vals[i]
+        li = 1
+        for j in range(length):
+            xj = x_vals[j]
+            if j != i:
+                li = li * (x-xj)/(xi-xj)
+        Px = Px + yi*li
+    return Px
+
+'''
+Chebyshev implementation
+'''
+def chebyshev(a, b, n):
+    xx = []
+    for k in range(0,n):
+        print(k)
+        xk = (a+b)/2 + (b-a)/2*math.cos((2*k+1)*math.pi/(2*n))
+        print(xk)
+        xx.append(xk)
+    return xx
 
 """
 Python's "main function" block.
@@ -28,7 +50,7 @@ if __name__ == "__main__":
     # Set the domain and number of points.
     a = 0
     b = 5
-    n = 75
+    n = 80
 
     # Set the number of points for plotting, the plotting x values,
     # and the plot window.
@@ -50,8 +72,11 @@ if __name__ == "__main__":
     plt.show()
 
     # Now define the Chebyshev nodes. TODO: you will need to update this!
-    x_cheb = np.linspace(a,b,n) #FIXME!
+    x_cheb = chebyshev(a,b,n) #FIXME!
     y_cheb = np.array([test_quad(x) for x in x_cheb])
+
+    # print(x_cheb)
+    # print(y_cheb)
 
     # Obtain the y values from the Lagrange Polynomial Interpolation.
     l_cheb = [lagrange(x, x_cheb, y_cheb) for x in x_plot]
