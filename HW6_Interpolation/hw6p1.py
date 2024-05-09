@@ -3,8 +3,11 @@ import numpy as np
 import pandas as pd
 
 with open('crime_data.csv', mode = 'r') as file:
+    # read the csv file
     csvFile = csv.reader(file)
+    # define the crimes
     crimes = next(file).split(",")[2:9]
+    # define the lists for each crime
     murder = []
     robbery = []
     agasslt = []
@@ -28,6 +31,7 @@ with open('crime_data.csv', mode = 'r') as file:
             arson.append(line[8])
             population.append(line[9])
 
+# convert the lists into arrays
 murder = np.array(murder)
 robbery = np.array(robbery)
 agasslt = np.array(agasslt)
@@ -37,22 +41,26 @@ mvtheft = np.array(mvtheft)
 arson = np.array(arson)
 population = np.array(population)
 
+# this function converts a vector into a log and reshape it into a column vector
 def arr2logCol(arr):
     arr = np.log(arr).reshape(-1,1)
     return arr
 
+# constructing matrix J
 logpop = arr2logCol(population)
 ones = np.ones((len(logpop), 1))
 J = np.hstack((logpop, ones))
 
+# solve the parameters for a crime
 def linalgSolve(crime):
     crime = arr2logCol(crime)
     a = np.transpose(J)@J
     b = np.transpose(J)@crime
     return np.linalg.solve(a, b)
 
-print(linalgSolve(murder))
+# print(linalgSolve(murder))
 
+# a list of lambda values for each crime
 lambdas = [linalgSolve(murder)[0],
            linalgSolve(robbery)[0],
            linalgSolve(agasslt)[0],

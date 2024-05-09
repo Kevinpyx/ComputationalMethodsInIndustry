@@ -19,14 +19,19 @@ TODO: your implementation goes below!
 def lagrange(x, x_vals, y_vals):
     length = len(x_vals)
     Px = 0
+    # This loop calculates each term of the polynomial. 
+    # A term is the product of the y value of the data point and the corresponding Lagrange basis function
     for i in range(length):
         yi = y_vals[i]
         xi = x_vals[i]
         li = 1
+        # This loop calculates the Lagrange basis function for the i-th data point (i.e. l_i(x))
         for j in range(length):
             xj = x_vals[j]
             if j != i:
                 li = li * (x-xj)/(xi-xj)
+
+        # Add the term to the polynomial
         Px = Px + yi*li
     return Px
 
@@ -36,9 +41,8 @@ Chebyshev implementation
 def chebyshev(a, b, n):
     xx = []
     for k in range(0,n):
-        print(k)
+        # calculate the Chebyshev nodes
         xk = (a+b)/2 + (b-a)/2*math.cos((2*k+1)*math.pi/(2*n))
-        print(xk)
         xx.append(xk)
     return xx
 

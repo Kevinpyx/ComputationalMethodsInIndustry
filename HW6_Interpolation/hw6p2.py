@@ -42,22 +42,29 @@ TODO: your code goes below!
 """
 def poly_fit(x_vals, y_vals, n):
     length = len(x_vals)
+    # defining the arrays to create J with
     ones = np.ones(length).reshape(-1, 1)
     x_col = np.array(x_vals).reshape(-1, 1)
     y_col = np.array(y_vals).reshape(-1, 1)
+
     # creating J
     if n < 0:
+        # raise an exception if n is negative
         raise(Exception)
     elif n == 0: 
+        # if n is 0, J is just a column of ones
         J = ones
     elif n == 1:
+        # if n is 1, J is a column of ones and a column of x values
         J = np.hstack((ones, x_col))
     else:
+        # if n is greater than 1, J is a column of ones and columns of x values raised to the power of 2 to n
         J = np.hstack((ones, x_col))
         for i in range(2, n+1):
             ith_col = np.power(x_col, i)
             J = np.hstack((J, ith_col))
 
+    # constructing the matrix a and b
     a = np.transpose(J)@J
     b = np.transpose(J)@y_col
     return np.linalg.solve(a, b)
