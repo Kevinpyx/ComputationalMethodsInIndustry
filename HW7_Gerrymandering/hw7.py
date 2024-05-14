@@ -25,10 +25,29 @@ returns: the new list of border nodes after the node flip is completed,
 """
 def updateBorder(old_border, fliprow, flipcol, plan, N):
 
+  flipped_val = plan[fliprow, flipcol]
+
   # Copy the border.
   new_border = old_border.copy()
 
   # FIXME - update the new_border!
+  neighbors = [(fliprow-1, flipcol),
+               (fliprow+1, flipcol),
+               (fliprow, flipcol-1),
+               (fliprow, flipcol+1)]
+  for neighbor in neighbors:
+    # Check if neighbors are inside the matrix
+    if neighbor[0] >= 0 and neighbor[0] < N and neighbor[1] >= 0 and neighbor[1] < N:
+      # Check if the value at neighbor is equal or different from the flipped precinct
+      if plan[neighbor[0], neighbor[1]] == flipped_val:
+        if neighbor in new_border:
+          new_border.remove(neighbor)
+      else:
+        if neighbor not in new_border:
+          new_border.append(neighbor)
+
+
+
 
   # Count the zeros and ones in the new border.
   new_borderOnes, new_borderZeros = gerry.countBorder(new_border, plan)
@@ -57,6 +76,13 @@ returns: the value of Q(X->Y) for the current step, where the input parameters
 def calcQ(offset, borderOnes, borderZeros, offset_thresh):
   Q = 0
   #FIXME - calculate Q!
+  if offset + 2 > offset_thresh: # too many 1s
+    Q = 1 / borderOnes
+  elif abs(offset - 2) > offset_thresh: # too many 0s
+    Q = 1 / borderZeros
+  else:
+    Q = 1 / (borderOnes + borderZeros)
+
   return Q
 
 """
@@ -113,6 +139,54 @@ def metropolis(plan, offset, N, offset_thresh,
     iter += 1
 
     # FIXME - this is where your Metropolis Implementation goes!
+    # randomly pick node to flip
+    
+    flip_loc = border[random.randint(0, len(border)-1)]
+    prev_val = plan[flip_loc[0], flip_loc[1]]
+    new_val = 1 - prev_val
+
+    # update offset
+    old_offset = offset
+    if (new_val == 1):
+      offset += 2
+    else:
+      offset -= 2
+
+  # Check if offset exceeds allowable threshold
+    if abs(offset) > offset_thresh:
+      offset = old_offset
+      iter -= 1
+      continue
+    
+    # Check if new plan is contiguous
+    plan[flip_loc[0], flip_loc[1]] = new_val
+    if gerry.isContiguous(plan, 0, N) and gerry.isContiguous(plan, 1, N):
+      pass
+    else:
+      plan[flip_loc[0], flip_loc[1]] = prev_val
+      iter -= 1
+      continue
+
+    # Calculate updated border info
+    new_border, new_borderOnes, new_borderZeros = updateBorder(border, flip_loc[0], flip_loc[1], plan, N)
+
+    # Calculate Q(x -> y) and Q(y -> x)
+    forwardQ = calcQ(old_offset, borderOnes, borderZeros, offset_thresh)
+    reverseQ = calcQ(offset, new_borderOnes, new_borderZeros, offset_thresh)
+
+    new_mu = measureFunc(plan, new_border)
+
+    # Calculate acceptance probability and accept according to it
+    accProb = min(new_mu * reverseQ / (mu * forwardQ), 1)
+    if random.random() > accProb:
+      plan[flip_loc[0], flip_loc[1]] = prev_val
+      offset = old_offset
+      iter -= 1
+    else:
+      border = new_border
+      borderOnes = new_borderOnes
+      borderZeros = new_borderZeros
+      mu = new_mu
 
     # Plot if plotIters is set.
     if (plotIters > 0) and (iter%plotIters == 0):
@@ -133,7 +207,7 @@ Python's "main function" block.
 if __name__ == "__main__":
 
   # Seed the rng. (For reproducible errors.)
-  random.seed(110)
+  random.seed(42)
 
   # Set parameters for this trial.
   N = 10 # NxN Matrix
@@ -154,8 +228,8 @@ if __name__ == "__main__":
   #     left_asym.png - will favor 1s on the left
   #     compact.png   - will maximize compactness
   #     top_left.png  - compactness with 1s in top-left
-  filename = "test.png"
-  path = "C:\\Users\\eaaut\\Desktop\\Teaching\\395_2024a_spring\\hw7\\"
+  filename = "compact.png"
+  path = "/home/hirosese/csc395/ComputationalMethodsInIndustry/HW7_Gerrymandering/"
 
   # Useful repeated value.
   halfN = math.floor(N/2)
