@@ -53,8 +53,10 @@ def updateBorder(old_border, fliprow, flipcol, plan, N):
   new_borderOnes, new_borderZeros = gerry.countBorder(new_border, plan)
   if plan[fliprow, flipcol] == 0:
     new_borderOnes += 1
+    new_borderZeros -= 1
   else:
     new_borderZeros += 1
+    new_borderOnes -= 1
 
   return new_border, new_borderOnes, new_borderZeros
 
@@ -228,8 +230,8 @@ if __name__ == "__main__":
   #     left_asym.png - will favor 1s on the left
   #     compact.png   - will maximize compactness
   #     top_left.png  - compactness with 1s in top-left
-  filename = "compact.png"
-  path = "/home/hirosese/csc395/ComputationalMethodsInIndustry/HW7_Gerrymandering/"
+  filename = "uniform.png"
+  path = "HW7_Gerrymandering/uniform/"
 
   # Useful repeated value.
   halfN = math.floor(N/2)
